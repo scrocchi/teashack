@@ -3,10 +3,12 @@ const path = require('path')
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
+  // Create Blog Post Pages
+
   // Define a template for blog post
   const blogPost = path.resolve('./src/templates/blog-post.js')
 
-  const result = await graphql(
+  const blogPostResult = await graphql(
     `
       {
         allContentfulBlogPost {
@@ -19,15 +21,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     `
   )
 
-  if (result.errors) {
+  if (blogPostResult.errors) {
     reporter.panicOnBuild(
       `There was an error loading your Contentful posts`,
-      result.errors
+      blogPostResult.errors
     )
     return
   }
 
-  const posts = result.data.allContentfulBlogPost.nodes
+  const posts = blogPostResult.data.allContentfulBlogPost.nodes
 
   // Create blog posts pages
   // But only if there's at least one blog post found in Contentful
@@ -46,6 +48,51 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           slug: post.slug,
           previousPostSlug,
           nextPostSlug,
+        },
+      })
+    })
+  }
+
+  // Create Static Pages
+
+   // Define a template for static pages
+  const pageTemplate = path.resolve('./src/templates/page.js')
+
+  const pageResult = await graphql(
+    `
+      {
+        allContentfulPage {
+          nodes {
+            title
+            slug
+          }
+        }
+      }
+    `
+  )
+
+  if (pageResult.errors) {
+    reporter.panicOnBuild(
+      `There was an error loading your Contentful static pages`,
+      pageResult.errors
+    )
+    return
+  }
+
+  const pages = pageResult.data.allContentfulPage.nodes
+
+  // Create static pages
+  // But only if there's at least one found in Contentful
+  // `context` is available in the template as a prop and as a variable in GraphQL
+
+  if (pages.length > 0) {
+    pages.forEach((page, index) => {
+
+      createPage({
+        path: `/${page.slug}/`,
+        component: pageTemplate,
+        context: {
+          slug: page.slug,
         },
       })
     })

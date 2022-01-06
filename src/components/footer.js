@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'gatsby'
 
 import Container from './container'
 import * as styles from './footer.module.css'
@@ -6,9 +7,17 @@ import * as styles from './footer.module.css'
 const Footer = () => (
   <Container as="footer">
     <div className={styles.container}>
-      Built with <a href="https://contentful.com/">Contentful</a> and{' '}
-      <a href="https://gatsbyjs.com">Gatsby</a> &middot;{' '}
-      <a href="https://github.com/contentful/starter-gatsby-blog">Source</a>
+      <span>
+        <Link to="/" className={styles.logoLink}>
+          <span className={styles.logo} />
+        </Link>
+      </span>
+      <span>
+        Copyright © 2022 Tea Shack.<br />
+        <Link to="/privacy-policy">Privacy Policy</Link> &middot;{' '}
+        <Link to="/terms-of-use">Terms of Use</Link> &middot;{' '}
+        <Link to="/affiliate-disclosure">Affiliate Disclosure</Link>
+      </span>
     </div>
   </Container>
 )
